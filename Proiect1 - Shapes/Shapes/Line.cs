@@ -1,11 +1,9 @@
 ﻿using Proiect1___Shapes.Repository;
 using Proiect1___Shapes.Tools;
 using System;
-using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace Proiect1___Shapes

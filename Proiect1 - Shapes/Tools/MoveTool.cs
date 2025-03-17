@@ -11,16 +11,16 @@ namespace Proiect1___Shapes.Tools
 {
     public class MoveTool : ITool
     {
-        private List<Line> lines; // The collection of lines to draw on the canvas
+        private List<Shape> shapes; // The collection of shapes to draw on the canvas
 
         private Line selectedLine = null;
         private Point lastMousePosition;
         private bool isDragging = false;
 
-        // Constructor to pass the collection of lines
-        public MoveTool(List<Line> lines)
+        // Constructor to pass the collection of shapes
+        public MoveTool(List<Shape> shapes)
         {
-            this.lines = lines;
+            this.shapes = shapes;
         }
 
         public void OnPaint(object sender, Graphics g)
@@ -36,7 +36,7 @@ namespace Proiect1___Shapes.Tools
         public void OnMouseDown(object sender, MouseEventArgs e)
         {
             // Check if we are selecting a shape
-            foreach (var line in lines)
+            foreach (Line line in shapes)
             {
                 if (IsClickNearLine(e.Location, line))
                 {

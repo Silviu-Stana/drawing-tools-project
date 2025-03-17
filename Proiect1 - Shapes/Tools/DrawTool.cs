@@ -5,7 +5,6 @@ using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Windows.Forms;
-using static System.Windows.Forms.LinkLabel;
 
 namespace Proiect1___Shapes.Tools
 {
@@ -13,21 +12,29 @@ namespace Proiect1___Shapes.Tools
     {
         private List<Shape> shapes;
         private Type selectedShapeType;
+        private Graphics g;
+        private Pen pen;
 
-        public DrawTool(List<Shape> shapes, Pen pen, Type selectedShapeType)
+        public DrawTool(List<Shape> shapes, Graphics g, Pen pen, Type selectedShapeType)
         {
+            this.g = g;
+            this.pen = pen;
             this.shapes = shapes;
             this.selectedShapeType = selectedShapeType;
 
         }
 
         private Point? startPoint = null;
+        private Point currentPoint;
         private bool isDrawing = false;
 
 
         public void OnPaint(object sender, Graphics g)
         {
-            foreach (IDrawable shape in shapes) shape.Draw(g);
+            if (isDrawing && startPoint.HasValue)
+            {
+                g.DrawLine(pen, startPoint.Value, currentPoint);
+            }
         }
 
         public void OnMouseDown(object sender, MouseEventArgs e)
@@ -50,7 +57,12 @@ namespace Proiect1___Shapes.Tools
 
         public void OnMouseMove(object sender, MouseEventArgs e)
         {
-            if (selectedShapeType is ITool creatableShape) creatableShape.OnMouseMove(sender, e);
+            if (isDrawing && startPoint.HasValue)
+            {
+                // Update current mouse position
+                currentPoint = e.Location;
+                (sender as Panel).Invalidate(); // Redraw the panel
+            }
         }
 
         public void OnMouseUp(object sender, MouseEventArgs e)

@@ -11,12 +11,12 @@ namespace Proiect1___Shapes.Tools
 {
     public class ResizeTool : ITool
     {
-        private List<Line> lines; // The collection of lines to draw on the canvas
+        private List<Shape> shapes; // The collection of shapes to draw on the canvas
 
-        // Constructor to pass the collection of lines
-        public ResizeTool(List<Line> lines)
+        // Constructor to pass the collection of shapes
+        public ResizeTool(List<Shape> shapes)
         {
-            this.lines = lines;
+            this.shapes = shapes;
         }
 
         public void OnPaint(object sender, Graphics g)

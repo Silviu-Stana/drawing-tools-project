@@ -24,7 +24,7 @@ namespace DrawUI
         public Form1()
         {
             InitializeComponent();
-            selectedTool = new DrawTool(shapes, pen, selectedShape);
+            selectedTool = new DrawTool(shapes, g, pen, selectedShape);
 
             //Prevent Flicker while moving the mouse
             DrawingPanel.GetType().GetProperty("DoubleBuffered", BindingFlags.Instance | BindingFlags.NonPublic)?.SetValue(DrawingPanel, true, null);
@@ -64,7 +64,7 @@ namespace DrawUI
             // If the draw tool is currently selected, update it with the new shape type
             if (selectedTool is DrawTool)
             {
-                selectedTool = new DrawTool(shapes, pen, selectedShape);
+                selectedTool = new DrawTool(shapes, g, pen, selectedShape);
             }
         }
         void ResetShapesBackgroundColors()
@@ -86,9 +86,9 @@ namespace DrawUI
         {
             ResetToolsBackgroundColors();
             SetBackgroundColorForLabel(toolPicture, Color.Gainsboro);
-            if (toolType == typeof(DrawTool)) selectedTool = new DrawTool(shapes, pen, selectedShape);
-            //else if (toolType == typeof(MoveTool)) selectedTool = new MoveTool(shapes);
-            //else if (toolType == typeof(ResizeTool)) selectedTool = new ResizeTool(shapes);
+            if (toolType == typeof(DrawTool)) selectedTool = new DrawTool(shapes, g, pen, selectedShape);
+            else if (toolType == typeof(MoveTool)) selectedTool = new MoveTool(shapes);
+            else if (toolType == typeof(ResizeTool)) selectedTool = new ResizeTool(shapes);
         }
         void ResetToolsBackgroundColors()
         {
