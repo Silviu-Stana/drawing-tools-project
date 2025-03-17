@@ -23,8 +23,8 @@ namespace DrawUI
 
         public Form1()
         {
-            selectedTool = new DrawTool(shapes, pen, selectedShape);
             InitializeComponent();
+            selectedTool = new DrawTool(shapes, pen, selectedShape);
 
             //Prevent Flicker while moving the mouse
             DrawingPanel.GetType().GetProperty("DoubleBuffered", BindingFlags.Instance | BindingFlags.NonPublic)?.SetValue(DrawingPanel, true, null);

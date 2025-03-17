@@ -28,7 +28,7 @@ namespace Proiect1___Shapes.Tools
             // Draw the selected shape while it's being moved
             if (isDragging && selectedLine != null)
             {
-                selectedLine.Draw(g);
+                selectedLine.OnPaint(sender, g);
                 System.Diagnostics.Debug.WriteLine($"Dragging line -> p1: ({selectedLine.p1.X}, {selectedLine.p1.Y}), p2: ({selectedLine.p2.X}, {selectedLine.p2.Y})");
             }
         }

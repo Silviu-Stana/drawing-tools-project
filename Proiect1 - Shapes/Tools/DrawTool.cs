@@ -12,62 +12,50 @@ namespace Proiect1___Shapes.Tools
     public class DrawTool : ITool
     {
         private List<Shape> shapes;
-        private Pen pen;
         private Type selectedShapeType;
-        private Shape currentShape;
 
         public DrawTool(List<Shape> shapes, Pen pen, Type selectedShapeType)
         {
             this.shapes = shapes;
-            this.pen = pen;
             this.selectedShapeType = selectedShapeType;
 
         }
 
+        private Point? startPoint = null;
+        private bool isDrawing = false;
+
+
         public void OnPaint(object sender, Graphics g)
         {
-            foreach (var shape in shapes) if (shape is IDrawable drawableShape) drawableShape.Draw(g);
+            foreach (IDrawable shape in shapes) shape.Draw(g);
         }
 
         public void OnMouseDown(object sender, MouseEventArgs e)
         {
-            if (selectedShapeType == typeof(Line))
+            if (!startPoint.HasValue)
             {
-                currentShape = new Line(shapes); // Pass shapes to Line constructor
+                // First click - Set start point
+                startPoint = e.Location;
+                isDrawing = true;
             }
             else
             {
-                currentShape = ShapeFactory.CreateShape(selectedShapeType, shapes);
-            }
-
-            if (currentShape is IDrawingTool creatableShape)
-            {
-                creatableShape.OnMouseDown(sender, e);
-                shapes.Add(currentShape); // Add the shape after starting a draw operation
+                // Second click - Commit the final line
+                shapes.Add(new Line(startPoint.Value.X, startPoint.Value.Y, e.X, e.Y));
+                startPoint = null; // Reset for new drawing
+                isDrawing = false;
+                (sender as Panel)?.Invalidate(); // Force repaint to save final shape
             }
         }
 
         public void OnMouseMove(object sender, MouseEventArgs e)
         {
-            if (currentShape is IDrawingTool creatableShape) creatableShape.OnMouseMove(sender, e);
+            if (selectedShapeType is ITool creatableShape) creatableShape.OnMouseMove(sender, e);
         }
 
         public void OnMouseUp(object sender, MouseEventArgs e)
         {
-            if (currentShape is IDrawingTool creatableShape) creatableShape.OnMouseUp(sender, e);
-        }
-
-        public class ShapeFactory
-        {
-            public static Shape CreateShape(Type shapeType, List<Shape> shapes)
-            {
-                if (shapeType == typeof(Line))
-                    return new Line(shapes);
-                if (shapeType == typeof(Circle))
-                    return new Circle();
-                // Add more shapes as needed
-                return null;
-            }
+            if (selectedShapeType is ITool creatableShape) creatableShape.OnMouseUp(sender, e);
         }
     }
 }

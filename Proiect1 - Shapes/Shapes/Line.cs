@@ -1,4 +1,6 @@
-﻿using System;
+﻿using Proiect1___Shapes.Repository;
+using Proiect1___Shapes.Tools;
+using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
@@ -8,13 +10,12 @@ using System.Windows.Forms;
 
 namespace Proiect1___Shapes
 {
-    public class Line : Shape, IDrawable, IMovable, IResizable, IDrawingTool
+    public class Line : Shape, IDrawable, IMovable, IResizable, ITool
     {
         public Pen pen { get; set; }
         public Point p1 { get; set; }
         public Point p2 { get; set; }
 
-        private List<Shape> shapes; // The collection of lines to draw on the canvas
         private Point? startPoint = null;
         Point currentPoint;
         private bool isDrawing = false;
@@ -22,18 +23,13 @@ namespace Proiect1___Shapes
 
         public Line(int x1, int y1, int x2, int y2)
         {
+            pen = new Pen(Color.Black, 3);
             p1 = new Point(x1, y1);
             p2 = new Point(x2, y2);
         }
 
-        public Line(List<Shape> shapes)
-        {
-            this.shapes = shapes;
-        }
-
         public override void Draw(Graphics g)
         {
-            pen = new Pen(Color.Black, 3);
             g.DrawLine(pen, p1, p2);
         }
 
@@ -59,7 +55,7 @@ namespace Proiect1___Shapes
         }
 
 
-        public void OnPaint(Graphics g)
+        public void OnPaint(object sender, Graphics g)
         {
             // Draw temporary line while dragging
             if (isDrawing && startPoint.HasValue)
@@ -79,7 +75,7 @@ namespace Proiect1___Shapes
             else
             {
                 // Second click - Commit the final line
-                shapes.Add(new Line(startPoint.Value.X, startPoint.Value.Y, e.X, e.Y));
+                //shapes.Add(new Line(shapes, startPoint.Value.X, startPoint.Value.Y, e.X, e.Y));
                 startPoint = null; // Reset for new drawing
                 isDrawing = false;
 

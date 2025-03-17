@@ -32,17 +32,7 @@ namespace Proiect1___Shapes
 
         public void DrawShape(Shape shape, Point currentClickLocation, Graphics g)
         {
-            if (shape is Line)
-            {
-                Line line = new Line(10, 10, 100, 100);
-                line.Draw(g);
-            }
-            else if (shape is Triangle)
-            {
-                Triangle triangle = new Triangle(10, 10, 100, 100, 200, 200);
-                triangle.Draw(g);
-            }
-            //shape.Draw(g);
+            shape.Draw(g);
         }
 
         public void MoveShape(Shape shape, int deltaX, int deltaY)
