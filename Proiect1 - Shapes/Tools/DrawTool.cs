@@ -10,64 +10,39 @@ namespace Proiect1___Shapes.Tools
 {
     public class DrawTool : ITool
     {
-        private List<Shape> shapes;
-        private Type selectedShapeType;
-        private Graphics g;
-        private Pen pen;
+        private IDrawable currentShape;
+        private readonly Func<IDrawable> shapeFactory; //creaza dinamic o instanta a formei selectate
 
-        public DrawTool(List<Shape> shapes, Graphics g, Pen pen, Type selectedShapeType)
+        public DrawTool(Func<IDrawable> shapeFactory)
         {
-            this.g = g;
-            this.pen = pen;
-            this.shapes = shapes;
-            this.selectedShapeType = selectedShapeType;
-
+            this.shapeFactory = shapeFactory;
         }
 
-        private Point? startPoint = null;
-        private Point currentPoint;
-        private bool isDrawing = false;
-
-
-        public void OnPaint(object sender, Graphics g)
+        public void OnMouseDown(Point position)
         {
-            if (isDrawing && startPoint.HasValue)
+            if (currentShape == null || currentShape.IsFinalized)
             {
-                g.DrawLine(pen, startPoint.Value, currentPoint);
-            }
-        }
-
-        public void OnMouseDown(object sender, MouseEventArgs e)
-        {
-            if (!startPoint.HasValue)
-            {
-                // First click - Set start point
-                startPoint = e.Location;
-                isDrawing = true;
+                currentShape = shapeFactory();
+                currentShape.StartDrawing(position);
             }
             else
             {
-                // Second click - Commit the final line
-                shapes.Add(new Line(startPoint.Value.X, startPoint.Value.Y, e.X, e.Y));
-                startPoint = null; // Reset for new drawing
-                isDrawing = false;
-                (sender as Panel)?.Invalidate(); // Force repaint to save final shape
+                currentShape.FinalizeDrawing();
+                currentShape = null;
             }
         }
 
-        public void OnMouseMove(object sender, MouseEventArgs e)
+        public void OnMouseMove(Point position)
         {
-            if (isDrawing && startPoint.HasValue)
+            if (currentShape != null && !currentShape.IsFinalized)
             {
-                // Update current mouse position
-                currentPoint = e.Location;
-                (sender as Panel).Invalidate(); // Redraw the panel
+                currentShape.UpdateDrawing(position);
             }
         }
 
-        public void OnMouseUp(object sender, MouseEventArgs e)
+        public void OnMouseUp(Point position)
         {
-            if (selectedShapeType is ITool creatableShape) creatableShape.OnMouseUp(sender, e);
+            //Nothing to do here
         }
     }
 }

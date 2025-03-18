@@ -10,13 +10,14 @@ namespace Proiect1___Shapes
     public class Square : Shape, IDrawable, IMovable, IResizable
     {
         public Pen pen { get; set; }
+
+        public override bool IsFinalized { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+
         public int width, height;
 
-        public Square(int x, int y)
+        public Square()
         {
             pen = new Pen(Color.Black);
-            X = x;
-            Y = y;
         }
 
         public override void Draw(Graphics g)
@@ -35,6 +36,21 @@ namespace Proiect1___Shapes
         {
             width = (int)(width * factor);
             height = (int)(height * factor);
+        }
+
+        public override void StartDrawing(Point startPoint)
+        {
+            throw new NotImplementedException();
+        }
+
+        public override void UpdateDrawing(Point currentPoint)
+        {
+            throw new NotImplementedException();
+        }
+
+        public override void FinalizeDrawing()
+        {
+            throw new NotImplementedException();
         }
     }
 }

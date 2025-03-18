@@ -11,59 +11,54 @@ namespace Proiect1___Shapes.Tools
 {
     public class MoveTool : ITool
     {
-        private List<Shape> shapes; // The collection of shapes to draw on the canvas
-
         private Line selectedLine = null;
         private Point lastMousePosition;
         private bool isDragging = false;
 
-        // Constructor to pass the collection of shapes
-        public MoveTool(List<Shape> shapes)
+        private readonly Func<IDrawable> shapeFactory; //creaza dinamic o instanta a formei selectate
+
+        public MoveTool(Func<IDrawable> shapeFactory)
         {
-            this.shapes = shapes;
+            this.shapeFactory = shapeFactory;
         }
 
-        public void OnPaint(object sender, Graphics g)
+        public void OnPaint(Point point)
         {
             // Draw the selected shape while it's being moved
             if (isDragging && selectedLine != null)
             {
-                selectedLine.OnPaint(sender, g);
+                //selectedLine.OnPaint(sender, g);
                 System.Diagnostics.Debug.WriteLine($"Dragging line -> p1: ({selectedLine.p1.X}, {selectedLine.p1.Y}), p2: ({selectedLine.p2.X}, {selectedLine.p2.Y})");
             }
         }
 
-        public void OnMouseDown(object sender, MouseEventArgs e)
+        public void OnMouseDown(Point point)
         {
             // Check if we are selecting a shape
-            foreach (Line line in shapes)
-            {
-                if (IsClickNearLine(e.Location, line))
-                {
-                    selectedLine = line;
-                    lastMousePosition = e.Location;
-                    isDragging = true;
-                }
-            }
+            //if (IsClickNearLine(e.Location, line))
+            //{
+            //    selectedLine = line;
+            //    lastMousePosition = e.Location;
+            //    isDragging = true;
+            //}
         }
 
-        public void OnMouseMove(object sender, MouseEventArgs e)
+        public void OnMouseMove(Point point)
         {
             if (isDragging && selectedLine != null)
             {
-                Point newMousePosition = e.Location;
+                //Point newMousePosition = e.Location;
 
-                int deltaX = newMousePosition.X - lastMousePosition.X;
-                int deltaY = newMousePosition.Y - lastMousePosition.Y;
+                //int deltaX = newMousePosition.X - lastMousePosition.X;
+                //int deltaY = newMousePosition.Y - lastMousePosition.Y;
 
-                selectedLine.Move(deltaX, deltaY);
+                //selectedLine.Move(deltaX, deltaY);
 
-                lastMousePosition = newMousePosition; // Update AFTER the move
-                (sender as Panel)?.Invalidate();
+                //lastMousePosition = newMousePosition; // Update AFTER the move
             }
         }
 
-        public void OnMouseUp(object sender, MouseEventArgs e)
+        public void OnMouseUp(Point point)
         {
             isDragging = false;
             selectedLine = null;
@@ -88,6 +83,11 @@ namespace Proiect1___Shapes.Tools
             float distance = (float)Math.Sqrt((p.X - closestX) * (p.X - closestX) + (p.Y - closestY) * (p.Y - closestY));
 
             return distance <= threshold;
+        }
+
+        public void OnPaint(object sender, Graphics graphics)
+        {
+            throw new NotImplementedException();
         }
     }
 }

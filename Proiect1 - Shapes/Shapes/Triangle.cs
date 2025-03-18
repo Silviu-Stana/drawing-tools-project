@@ -14,12 +14,12 @@ namespace Proiect1___Shapes
         public Point p2 { get; set; }
         public Point p3 { get; set; }
 
-        public Triangle(int x1, int y1, int x2, int y2, int x3, int y3)
+
+        public override bool IsFinalized { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+
+        public Triangle()
         {
             pen = new Pen(Color.Black, 3);
-            p1 = new Point(x1, y1);
-            p2 = new Point(x2, y2);
-            p3 = new Point(x3, y3);
         }
 
         public override void Draw(Graphics g)
@@ -50,6 +50,21 @@ namespace Proiect1___Shapes
             //Mutam punctele 2 si 3 la noile pozitii
             p2 = new Point(newX2, newY2);
             p3 = new Point(newX3, newY3);
+        }
+
+        public override void StartDrawing(Point startPoint)
+        {
+            throw new NotImplementedException();
+        }
+
+        public override void UpdateDrawing(Point currentPoint)
+        {
+            throw new NotImplementedException();
+        }
+
+        public override void FinalizeDrawing()
+        {
+            throw new NotImplementedException();
         }
     }
 }

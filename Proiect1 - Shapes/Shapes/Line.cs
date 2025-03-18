@@ -8,27 +8,31 @@ using System.Windows.Forms;
 
 namespace Proiect1___Shapes
 {
-    public class Line : Shape, IDrawable, IMovable, IResizable, ITool
+    public class Line : Shape, IDrawable, IMovable, IResizable
     {
         public Pen pen { get; set; }
         public Point p1 { get; set; }
         public Point p2 { get; set; }
 
-        private Point? startPoint = null;
-        Point currentPoint;
-        private bool isDrawing = false;
+        // Implement the IsFinalized property
+        private bool isFinalized = false;
+        public override bool IsFinalized
+        {
+            get => isFinalized;
+            set => isFinalized = value;
+        }
 
-
-        public Line(int x1, int y1, int x2, int y2)
+        public Line()
         {
             pen = new Pen(Color.Black, 3);
-            p1 = new Point(x1, y1);
-            p2 = new Point(x2, y2);
         }
 
         public override void Draw(Graphics g)
         {
+            //if (!IsFinalized)  //can be used to have different color while drawing
+            //{
             g.DrawLine(pen, p1, p2);
+            //}
         }
 
         public override void Move(int deltaX, int deltaY)
@@ -55,45 +59,22 @@ namespace Proiect1___Shapes
 
         public void OnPaint(object sender, Graphics g)
         {
-            // Draw temporary line while dragging
-            if (isDrawing && startPoint.HasValue)
-            {
-                g.DrawLine(pen, startPoint.Value, currentPoint);
-            }
+            g.DrawLine(pen, p1, p2);
         }
 
-        public void OnMouseDown(object sender, MouseEventArgs e)
+        public override void StartDrawing(Point startPoint)
         {
-            if (!startPoint.HasValue)
-            {
-                // First click - Set start point
-                startPoint = e.Location;
-                isDrawing = true;
-            }
-            else
-            {
-                // Second click - Commit the final line
-                //shapes.Add(new Line(shapes, startPoint.Value.X, startPoint.Value.Y, e.X, e.Y));
-                startPoint = null; // Reset for new drawing
-                isDrawing = false;
-
-                (sender as Panel)?.Invalidate(); // Force repaint to save final shape
-            }
+            // First click - Set start point
+            p1 = startPoint;
+            p2 = startPoint;
         }
 
-        public void OnMouseMove(object sender, MouseEventArgs e)
+        public override void UpdateDrawing(Point currentPoint)
         {
-            if (isDrawing && startPoint.HasValue)
-            {
-                // Update current mouse position
-                currentPoint = e.Location;
-                (sender as Panel).Invalidate(); // Redraw the panel
-            }
+            p2 = currentPoint;
         }
 
-        public void OnMouseUp(object sender, MouseEventArgs e)
-        {
-            //Nimic necesar aici
-        }
+        public override void FinalizeDrawing() => IsFinalized = true;
+
     }
 }

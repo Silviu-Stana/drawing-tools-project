@@ -11,30 +11,29 @@ namespace Proiect1___Shapes.Tools
 {
     public class ResizeTool : ITool
     {
-        private List<Shape> shapes; // The collection of shapes to draw on the canvas
+        private readonly Func<IDrawable> shapeFactory; //creaza dinamic o instanta a formei selectate
 
-        // Constructor to pass the collection of shapes
-        public ResizeTool(List<Shape> shapes)
+        public ResizeTool(Func<IDrawable> shapeFactory)
         {
-            this.shapes = shapes;
+            this.shapeFactory = shapeFactory;
         }
 
-        public void OnPaint(object sender, Graphics g)
-        {
-            throw new NotImplementedException();
-        }
-
-        public void OnMouseDown(object sender, MouseEventArgs e)
+        public void OnMouseDown(Point position)
         {
             throw new NotImplementedException();
         }
 
-        public void OnMouseMove(object sender, MouseEventArgs e)
+        public void OnMouseMove(Point position)
         {
             throw new NotImplementedException();
         }
 
-        public void OnMouseUp(object sender, MouseEventArgs e)
+        public void OnMouseUp(Point position)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void OnPaint(object sender, Graphics graphics)
         {
             throw new NotImplementedException();
         }

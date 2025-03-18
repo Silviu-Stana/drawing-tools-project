@@ -15,30 +15,28 @@ namespace DrawUI
     {
         Graphics g;
         Pen pen = new Pen(Color.Black, 3);
-        Type selectedShape;
 
-        private ITool selectedTool;
+        private Func<Shape> shapeFactory;
+        private ITool currentTool;
+        private List<Shape> shapes = new List<Shape>();
 
-        List<Shape> shapes = new List<Shape>();
 
         public Form1()
         {
             InitializeComponent();
-            selectedTool = new DrawTool(shapes, g, pen, selectedShape);
 
             //Prevent Flicker while moving the mouse
             DrawingPanel.GetType().GetProperty("DoubleBuffered", BindingFlags.Instance | BindingFlags.NonPublic)?.SetValue(DrawingPanel, true, null);
 
-            SelectTool(typeof(DrawTool), DRAW);
-            SelectShape(typeof(Line), DrawLine);
+            SelectTool(DRAW, () => new DrawTool(shapeFactory));
+            SelectShape(DrawLine, () => new Line());
         }
 
         private void DrawingPanel_Paint(object sender, PaintEventArgs e)
         {
-            selectedTool.OnPaint(sender, e.Graphics);
-
             // To draw on THIS panel
             g = e.Graphics;
+
             // Enable anti-aliasing
             g.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.AntiAlias;
 
@@ -51,21 +49,23 @@ namespace DrawUI
         }
 
 
-        void DrawTriangle_Click(object sender, EventArgs e) => SelectShape(typeof(Triangle), DrawTriangle);
-        void DrawLine_Click(object sender, EventArgs e) => SelectShape(typeof(Line), DrawLine);
-        void DrawCircle_Click(object sender, EventArgs e) => SelectShape(typeof(Circle), DrawCircle);
-        void DrawSquare_Click(object sender, EventArgs e) => SelectShape(typeof(Square), DrawSquare);
-        void SelectShape(Type shapeType, PictureBox toolPicture)
+        void DrawTriangle_Click(object sender, EventArgs e) => SelectShape(DrawTriangle, () => new Triangle());
+        void DrawLine_Click(object sender, EventArgs e) => SelectShape(DrawLine, () => new Line());
+        void DrawCircle_Click(object sender, EventArgs e) => SelectShape(DrawCircle, () => new Circle());
+        void DrawSquare_Click(object sender, EventArgs e) => SelectShape(DrawSquare, () => new Square());
+
+        private void SelectShape(PictureBox toolPicture, Func<Shape> shapeFactory)
         {
             ResetShapesBackgroundColors();
-            selectedShape = shapeType;
             SetBackgroundColorForPicture(toolPicture, Color.Gainsboro);
 
-            // If the draw tool is currently selected, update it with the new shape type
-            if (selectedTool is DrawTool)
+            // Set the current tool to DrawTool with the selected shape factory
+            currentTool = new DrawTool(() =>
             {
-                selectedTool = new DrawTool(shapes, g, pen, selectedShape);
-            }
+                var shape = shapeFactory(); // Create a shape instance
+                shapes.Add(shape);
+                return shape;
+            });
         }
         void ResetShapesBackgroundColors()
         {
@@ -79,16 +79,16 @@ namespace DrawUI
 
 
 
-        private void DrawTool_Click(object sender, EventArgs e) => SelectTool(typeof(DrawTool), DRAW);
-        private void MoveTool_Click(object sender, EventArgs e) => SelectTool(typeof(MoveTool), MOVE);
-        private void RESIZE_Click(object sender, EventArgs e) => SelectTool(typeof(ResizeTool), RESIZE);
-        void SelectTool(Type toolType, Label toolPicture)
+        private void DrawTool_Click(object sender, EventArgs e) => SelectTool(DRAW, () => new DrawTool(shapeFactory));
+        private void MoveTool_Click(object sender, EventArgs e) => SelectTool(MOVE, () => new MoveTool(shapeFactory));
+        private void RESIZE_Click(object sender, EventArgs e) => SelectTool(RESIZE, () => new ResizeTool(shapeFactory));
+        void SelectTool(Label toolPicture, Func<ITool> toolFactory)
         {
             ResetToolsBackgroundColors();
             SetBackgroundColorForLabel(toolPicture, Color.Gainsboro);
-            if (toolType == typeof(DrawTool)) selectedTool = new DrawTool(shapes, g, pen, selectedShape);
-            else if (toolType == typeof(MoveTool)) selectedTool = new MoveTool(shapes);
-            else if (toolType == typeof(ResizeTool)) selectedTool = new ResizeTool(shapes);
+
+            // Create the selected tool dynamically
+            currentTool = toolFactory();
         }
         void ResetToolsBackgroundColors()
         {
@@ -99,8 +99,20 @@ namespace DrawUI
         void SetBackgroundColorForLabel(Label label, Color color) => label.BackColor = color;
 
 
-        private void DrawingPanel_MouseDown(object sender, MouseEventArgs e) => selectedTool.OnMouseDown(sender, e);
-        private void DrawingPanel_MouseMove(object sender, MouseEventArgs e) => selectedTool.OnMouseMove(sender, e);
-        private void DrawingPanel_MouseUp(object sender, MouseEventArgs e) => selectedTool.OnMouseUp(sender, e);
+        private void DrawingPanel_MouseDown(object sender, MouseEventArgs e)
+        {
+            currentTool.OnMouseDown(e.Location);
+            Invalidate();
+        }
+        private void DrawingPanel_MouseMove(object sender, MouseEventArgs e)
+        {
+            currentTool.OnMouseMove(e.Location);
+            Invalidate();
+        }
+        private void DrawingPanel_MouseUp(object sender, MouseEventArgs e)
+        {
+            currentTool.OnMouseUp(e.Location);
+            Invalidate();
+        }
     }
 }
