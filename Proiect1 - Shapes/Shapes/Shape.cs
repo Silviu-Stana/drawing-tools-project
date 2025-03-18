@@ -1,21 +1,16 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using Newtonsoft.Json;
+using System;
 using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Forms;
+using static System.Windows.Forms.AxHost;
+
 
 namespace Proiect1___Shapes
 {
     public abstract class Shape : IDrawable
     {
-        public int X { get; set; }
-        public int Y { get; set; }
-
+        public abstract string JsonType { get; }
         public abstract void Draw(Graphics g);
         public abstract void Move(int deltaX, int deltaY);
-        public abstract void Resize(float factor);
 
         // Add IDrawable methods
         public abstract void StartDrawing(Point startPoint);
@@ -40,7 +35,7 @@ namespace Proiect1___Shapes
 
     public interface IResizable
     {
-        void Resize(float factor);
+        void Resize(float deltaX, float deltaY);
     }
 
 }

@@ -10,10 +10,11 @@ namespace Proiect1___Shapes
 {
     public class Line : Shape, IDrawable, IMovable, IResizable
     {
-        public Pen pen { get; set; }
         public Point p1 { get; set; }
         public Point p2 { get; set; }
+        public override string JsonType => "Line";
 
+        private Pen pen { get; set; }
         private bool isFinalized = false;
         public override bool IsFinalized { get => isFinalized; set => isFinalized = value; }
         public override void FinalizeDrawing() => IsFinalized = true;
@@ -37,16 +38,10 @@ namespace Proiect1___Shapes
 
         }
 
-        public override void Resize(float factor)
+        public void Resize(float deltaX, float deltaY)
         {
-            if (p1 == null || p2 == null) return;
-
-            //Calculam noua pozitie a punctului 2
-            int newX = p1.X + (int)((p2.X - p1.X) * factor);
-            int newY = p1.Y + (int)((p2.Y - p1.Y) * factor);
-
-            //Mutam punctul 2 la noua pozitie
-            p2 = new Point(newX, newY);
+            // Update the second point (p2) based on mouse movement
+            p2 = new Point(p2.X + (int)deltaX, p2.Y + (int)deltaY);
         }
 
 

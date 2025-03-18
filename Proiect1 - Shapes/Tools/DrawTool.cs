@@ -20,6 +20,7 @@ namespace Proiect1___Shapes.Tools
         public void OnMouseDown(Point position)
         {
             Console.WriteLine($"Drawing started at {position}");
+
             if (currentShape == null || currentShape.IsFinalized)
             {
                 currentShape = shapeFactory();

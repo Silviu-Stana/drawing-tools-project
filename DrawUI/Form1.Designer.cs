@@ -41,6 +41,8 @@
             this.RESIZE = new System.Windows.Forms.Label();
             this.MOVE = new System.Windows.Forms.Label();
             this.DrawingPanel = new System.Windows.Forms.Panel();
+            this.SaveShapes = new System.Windows.Forms.Button();
+            this.LoadShapes = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.DrawTriangle)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.DrawCircle)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.DrawSquare)).BeginInit();
@@ -180,6 +182,7 @@
             this.RESIZE.Size = new System.Drawing.Size(182, 57);
             this.RESIZE.TabIndex = 7;
             this.RESIZE.Text = "RESIZE";
+            this.RESIZE.Click += new System.EventHandler(this.RESIZE_Click);
             // 
             // MOVE
             // 
@@ -207,11 +210,35 @@
             this.DrawingPanel.MouseMove += new System.Windows.Forms.MouseEventHandler(this.DrawingPanel_MouseMove);
             this.DrawingPanel.MouseUp += new System.Windows.Forms.MouseEventHandler(this.DrawingPanel_MouseUp);
             // 
+            // SaveShapes
+            // 
+            this.SaveShapes.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.SaveShapes.Location = new System.Drawing.Point(72, 965);
+            this.SaveShapes.Name = "SaveShapes";
+            this.SaveShapes.Size = new System.Drawing.Size(220, 49);
+            this.SaveShapes.TabIndex = 7;
+            this.SaveShapes.Text = "Save Shapes";
+            this.SaveShapes.UseVisualStyleBackColor = true;
+            this.SaveShapes.Click += new System.EventHandler(this.SaveShapes_Click);
+            // 
+            // LoadShapes
+            // 
+            this.LoadShapes.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.LoadShapes.Location = new System.Drawing.Point(311, 965);
+            this.LoadShapes.Name = "LoadShapes";
+            this.LoadShapes.Size = new System.Drawing.Size(220, 49);
+            this.LoadShapes.TabIndex = 8;
+            this.LoadShapes.Text = "Load Shapes";
+            this.LoadShapes.UseVisualStyleBackColor = true;
+            this.LoadShapes.Click += new System.EventHandler(this.LoadShapes_Click);
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1694, 1008);
+            this.ClientSize = new System.Drawing.Size(1694, 1035);
+            this.Controls.Add(this.LoadShapes);
+            this.Controls.Add(this.SaveShapes);
             this.Controls.Add(this.DrawingPanel);
             this.Controls.Add(this.panel1);
             this.Controls.Add(this.panel2);
@@ -244,6 +271,8 @@
         private System.Windows.Forms.Label MOVE;
         private System.Windows.Forms.Panel DrawingPanel;
         private System.Windows.Forms.PictureBox DrawLine;
+        private System.Windows.Forms.Button SaveShapes;
+        private System.Windows.Forms.Button LoadShapes;
     }
 }
 

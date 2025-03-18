@@ -1,16 +1,14 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Drawing;
-using System.Linq;
-using System.Text;
 
 namespace Proiect1___Shapes
 {
     public class Circle : Shape, IDrawable, IMovable, IResizable
     {
-        public Pen pen { get; set; }
+        private Pen pen { get; set; }
         public Point p1 { get; set; }
-        public int Radius { get; set; }
+        public float Radius { get; set; }
+        public override string JsonType => "Circle";
 
         private bool isFinalized = false;
         public override bool IsFinalized { get => isFinalized; set => isFinalized = value; }
@@ -34,9 +32,14 @@ namespace Proiect1___Shapes
             p1 = new Point(p1.X + deltaX, p1.Y + deltaY);
         }
 
-        public override void Resize(float factor)
+        public void Resize(float deltaX, float deltaY)
         {
-            Radius = (int)(Radius * factor);
+            // Adjust the radius based on the delta values (assuming deltaY affects the radius directly)
+            float newRadius = Radius - deltaY;
+
+            if (newRadius < 0) newRadius = 0;
+
+            Radius = newRadius;
         }
 
         public override void StartDrawing(Point startPoint)

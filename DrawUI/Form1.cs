@@ -19,7 +19,9 @@ namespace DrawUI
         private Func<Shape> shapeFactory;
         private ITool currentTool;
         private List<IDrawable> shapes = new List<IDrawable>();
-        private IDrawable currentShape; // Define currentShape
+        private IDrawable currentShape;
+
+        public JSONShapeRepository ShapeRepository { get; set; }
 
         public Form1()
         {
@@ -27,6 +29,8 @@ namespace DrawUI
 
             //Prevent Flicker while moving the mouse
             DrawingPanel.GetType().GetProperty("DoubleBuffered", BindingFlags.Instance | BindingFlags.NonPublic)?.SetValue(DrawingPanel, true, null);
+
+            ShapeRepository = new JSONShapeRepository();
 
             // Initialize shapeFactory with a default shape type (e.g., Line)
             shapeFactory = () => new Line(); // This will create a new Line shape by default
@@ -66,10 +70,14 @@ namespace DrawUI
         private void SelectShape(PictureBox toolPicture, Func<Shape> shapeFactory)
         {
             ResetShapesBackgroundColors();
+            ResetToolsBackgroundColors();
             SetBackgroundColorForPicture(toolPicture, Color.Gainsboro);
 
             // Set the current tool to DrawTool with the selected shape factory
             currentTool = new DrawTool(shapeFactory, shapes);
+
+            // Daca selectezi o forma noua, intra automat in modul de desenare
+            SelectTool(DRAW, () => new DrawTool(shapeFactory, shapes));
         }
         void ResetShapesBackgroundColors()
         {
@@ -84,8 +92,8 @@ namespace DrawUI
 
 
         private void DrawTool_Click(object sender, EventArgs e) => SelectTool(DRAW, () => new DrawTool(shapeFactory, shapes));
-        private void MoveTool_Click(object sender, EventArgs e) => SelectTool(MOVE, () => new MoveTool(shapeFactory));
-        private void RESIZE_Click(object sender, EventArgs e) => SelectTool(RESIZE, () => new ResizeTool(shapeFactory));
+        private void MoveTool_Click(object sender, EventArgs e) => SelectTool(MOVE, () => new MoveTool(shapes));
+        private void RESIZE_Click(object sender, EventArgs e) => SelectTool(RESIZE, () => new ResizeTool(shapeFactory, shapes));
         void SelectTool(Label toolPicture, Func<ITool> toolFactory)
         {
             ResetToolsBackgroundColors();
@@ -117,6 +125,21 @@ namespace DrawUI
         {
             currentTool.OnMouseUp(e.Location);
             DrawingPanel.Invalidate();
+        }
+
+        private void SaveShapes_Click(object sender, EventArgs e)
+        {
+            //Conversie IDrawable -> Shape
+            ShapeRepository.SaveShapes(shapes.Cast<Shape>().ToList());
+        }
+
+        private void LoadShapes_Click(object sender, EventArgs e)
+        {
+            //Sterge toate formele desenate
+            shapes = null;
+
+            //Inlocuim cu ce era in fisierul JSON
+            shapes = ShapeRepository.LoadShapes().Cast<IDrawable>().ToList();
         }
     }
 }

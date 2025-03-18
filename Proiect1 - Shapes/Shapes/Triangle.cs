@@ -9,13 +9,22 @@ namespace Proiect1___Shapes
 {
     public class Triangle : Shape, IDrawable, IMovable, IResizable
     {
-        public Pen pen { get; set; }
+        private Pen pen { get; set; }
         public Point p1 { get; set; }
         public Point p2 { get; set; }
         public Point p3 { get; set; }
+        public override string JsonType => "Triangle";
 
 
-        public override bool IsFinalized { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+        private bool isFinalized = false;
+        public override bool IsFinalized { get => isFinalized; set => isFinalized = value; }
+        public override void FinalizeDrawing()
+        {
+            if (p1 != Point.Empty && p2 != Point.Empty && p3 != Point.Empty)
+            {
+                IsFinalized = true;
+            }
+        }
 
         public Triangle()
         {
@@ -25,46 +34,56 @@ namespace Proiect1___Shapes
         public override void Draw(Graphics g)
         {
             //Desenam triunghiul cu 3 puncte
+            if (p1 != Point.Empty && p2 != Point.Empty && p3 != Point.Empty)
+            {
+                Point[] points = { p1, p2, p3 };
+                g.DrawPolygon(pen, points);
+            }
         }
 
         public override void Move(int deltaX, int deltaY)
         {
             //Mutam toate cele 3 puncte ale triunghiului
-            p1.Offset(deltaX, deltaY);
-            p2.Offset(deltaX, deltaY);
-            p3.Offset(deltaX, deltaY);
+            p1 = new Point(p1.X + deltaX, p1.Y + deltaY);
+            p2 = new Point(p2.X + deltaX, p2.Y + deltaY);
+            p3 = new Point(p3.X + deltaX, p3.Y + deltaY);
         }
 
-        public override void Resize(float factor)
+        public void Resize(float deltaX, float deltaY)
         {
-            if (p1 == null || p2 == null || p3 == null) return;
+            // Calculate the center (centroid) of the triangle
+            float centerX = (p1.X + p2.X + p3.X) / 3f;
+            float centerY = (p1.Y + p2.Y + p3.Y) / 3f;
 
-            //Distanta dintre Punctul1 si Punctul2 inmultita cu factorul (creste sau scade)
-            int newX2 = p1.X + (int)((p2.X - p1.X) * factor);
-            int newY2 = p1.Y + (int)((p2.Y - p1.Y) * factor);
+            // Calculate scaling factors based on deltaX and deltaY
+            float scaleX = 1 + deltaX / 100;  // Scale factor based on horizontal movement
+            float scaleY = 1 + deltaY / 100;  // Scale factor based on vertical movement
 
-            //Distanta dintre Punctul1 si Punctul3 inmultita cu factorul
-            int newX3 = p1.X + (int)((p3.X - p1.X) * factor);
-            int newY3 = p1.Y + (int)((p3.Y - p1.Y) * factor);
+            // Scale each point relative to the center
+            p1 = ScalePoint(p1, centerX, centerY, scaleX, scaleY);
+            p2 = ScalePoint(p2, centerX, centerY, scaleX, scaleY);
+            p3 = ScalePoint(p3, centerX, centerY, scaleX, scaleY);
+        }
 
-            //Mutam punctele 2 si 3 la noile pozitii
-            p2 = new Point(newX2, newY2);
-            p3 = new Point(newX3, newY3);
+        private Point ScalePoint(Point point, float centerX, float centerY, float scaleX, float scaleY)
+        {
+            // Scale the point relative to the center
+            int newX = (int)(centerX + (point.X - centerX) * scaleX);
+            int newY = (int)(centerY + (point.Y - centerY) * scaleY);
+
+            return new Point(newX, newY);
         }
 
         public override void StartDrawing(Point startPoint)
         {
-            throw new NotImplementedException();
+            p1 = startPoint;
         }
 
         public override void UpdateDrawing(Point currentPoint)
         {
-            throw new NotImplementedException();
-        }
-
-        public override void FinalizeDrawing()
-        {
-            throw new NotImplementedException();
+            // As the mouse moves, adjust points to create a triangle
+            if (p1 != Point.Empty) p2 = new Point(currentPoint.X, p1.Y); // Make the second point horizontal to p1
+            if (p2 != Point.Empty) p3 = new Point(p1.X, currentPoint.Y); // Make the third point vertical to p1
         }
     }
 }
