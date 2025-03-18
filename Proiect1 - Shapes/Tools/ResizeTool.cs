@@ -32,10 +32,5 @@ namespace Proiect1___Shapes.Tools
         {
             throw new NotImplementedException();
         }
-
-        public void OnPaint(object sender, Graphics graphics)
-        {
-            throw new NotImplementedException();
-        }
     }
 }

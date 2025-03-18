@@ -22,18 +22,10 @@ namespace Proiect1___Shapes.Tools
             this.shapeFactory = shapeFactory;
         }
 
-        public void OnPaint(Point point)
-        {
-            // Draw the selected shape while it's being moved
-            if (isDragging && selectedLine != null)
-            {
-                //selectedLine.OnPaint(sender, g);
-                System.Diagnostics.Debug.WriteLine($"Dragging line -> p1: ({selectedLine.p1.X}, {selectedLine.p1.Y}), p2: ({selectedLine.p2.X}, {selectedLine.p2.Y})");
-            }
-        }
 
         public void OnMouseDown(Point point)
         {
+            //System.Diagnostics.Debug.WriteLine($"Dragging line -> p1: ({selectedLine.p1.X}, {selectedLine.p1.Y}), p2: ({selectedLine.p2.X}, {selectedLine.p2.Y})");
             // Check if we are selecting a shape
             //if (IsClickNearLine(e.Location, line))
             //{

@@ -14,13 +14,9 @@ namespace Proiect1___Shapes
         public Point p1 { get; set; }
         public Point p2 { get; set; }
 
-        // Implement the IsFinalized property
         private bool isFinalized = false;
-        public override bool IsFinalized
-        {
-            get => isFinalized;
-            set => isFinalized = value;
-        }
+        public override bool IsFinalized { get => isFinalized; set => isFinalized = value; }
+        public override void FinalizeDrawing() => IsFinalized = true;
 
         public Line()
         {
@@ -29,10 +25,7 @@ namespace Proiect1___Shapes
 
         public override void Draw(Graphics g)
         {
-            //if (!IsFinalized)  //can be used to have different color while drawing
-            //{
             g.DrawLine(pen, p1, p2);
-            //}
         }
 
         public override void Move(int deltaX, int deltaY)
@@ -73,8 +66,5 @@ namespace Proiect1___Shapes
         {
             p2 = currentPoint;
         }
-
-        public override void FinalizeDrawing() => IsFinalized = true;
-
     }
 }

@@ -2,9 +2,6 @@
 using System;
 using System.Collections.Generic;
 using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Windows.Forms;
 
 namespace Proiect1___Shapes.Tools
 {
@@ -12,18 +9,24 @@ namespace Proiect1___Shapes.Tools
     {
         private IDrawable currentShape;
         private readonly Func<IDrawable> shapeFactory; //creaza dinamic o instanta a formei selectate
+        private readonly List<IDrawable> shapes;
 
-        public DrawTool(Func<IDrawable> shapeFactory)
+        public DrawTool(Func<IDrawable> shapeFactory, List<IDrawable> shapes)
         {
             this.shapeFactory = shapeFactory;
+            this.shapes = shapes;
         }
 
         public void OnMouseDown(Point position)
         {
+            Console.WriteLine($"Drawing started at {position}");
             if (currentShape == null || currentShape.IsFinalized)
             {
                 currentShape = shapeFactory();
                 currentShape.StartDrawing(position);
+
+                // Add to the shapes list immediately after creation
+                shapes.Add(currentShape);
             }
             else
             {
@@ -42,7 +45,7 @@ namespace Proiect1___Shapes.Tools
 
         public void OnMouseUp(Point position)
         {
-            //Nothing to do here
+
         }
     }
 }

@@ -18,8 +18,8 @@ namespace DrawUI
 
         private Func<Shape> shapeFactory;
         private ITool currentTool;
-        private List<Shape> shapes = new List<Shape>();
-
+        private List<IDrawable> shapes = new List<IDrawable>();
+        private IDrawable currentShape; // Define currentShape
 
         public Form1()
         {
@@ -28,7 +28,10 @@ namespace DrawUI
             //Prevent Flicker while moving the mouse
             DrawingPanel.GetType().GetProperty("DoubleBuffered", BindingFlags.Instance | BindingFlags.NonPublic)?.SetValue(DrawingPanel, true, null);
 
-            SelectTool(DRAW, () => new DrawTool(shapeFactory));
+            // Initialize shapeFactory with a default shape type (e.g., Line)
+            shapeFactory = () => new Line(); // This will create a new Line shape by default
+
+            SelectTool(DRAW, () => new DrawTool(shapeFactory, shapes));
             SelectShape(DrawLine, () => new Line());
         }
 
@@ -41,6 +44,12 @@ namespace DrawUI
             g.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.AntiAlias;
 
             foreach (var shape in shapes) shape.Draw(g);
+
+            // De asemenea re-deseneaza forma (neterminata)
+            if (currentShape != null && !currentShape.IsFinalized)
+            {
+                currentShape.Draw(g);
+            }
         }
 
         private void Form1_Load(object sender, EventArgs e)
@@ -60,12 +69,7 @@ namespace DrawUI
             SetBackgroundColorForPicture(toolPicture, Color.Gainsboro);
 
             // Set the current tool to DrawTool with the selected shape factory
-            currentTool = new DrawTool(() =>
-            {
-                var shape = shapeFactory(); // Create a shape instance
-                shapes.Add(shape);
-                return shape;
-            });
+            currentTool = new DrawTool(shapeFactory, shapes);
         }
         void ResetShapesBackgroundColors()
         {
@@ -79,7 +83,7 @@ namespace DrawUI
 
 
 
-        private void DrawTool_Click(object sender, EventArgs e) => SelectTool(DRAW, () => new DrawTool(shapeFactory));
+        private void DrawTool_Click(object sender, EventArgs e) => SelectTool(DRAW, () => new DrawTool(shapeFactory, shapes));
         private void MoveTool_Click(object sender, EventArgs e) => SelectTool(MOVE, () => new MoveTool(shapeFactory));
         private void RESIZE_Click(object sender, EventArgs e) => SelectTool(RESIZE, () => new ResizeTool(shapeFactory));
         void SelectTool(Label toolPicture, Func<ITool> toolFactory)
@@ -102,17 +106,17 @@ namespace DrawUI
         private void DrawingPanel_MouseDown(object sender, MouseEventArgs e)
         {
             currentTool.OnMouseDown(e.Location);
-            Invalidate();
+            DrawingPanel.Invalidate();
         }
         private void DrawingPanel_MouseMove(object sender, MouseEventArgs e)
         {
             currentTool.OnMouseMove(e.Location);
-            Invalidate();
+            DrawingPanel.Invalidate();
         }
         private void DrawingPanel_MouseUp(object sender, MouseEventArgs e)
         {
             currentTool.OnMouseUp(e.Location);
-            Invalidate();
+            DrawingPanel.Invalidate();
         }
     }
 }
